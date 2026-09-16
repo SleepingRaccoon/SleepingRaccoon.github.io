@@ -15,7 +15,8 @@ kramdown:
   # 标题 id 交给 assets/js/toc.js 统一生成：kramdown 的中文标题 id 会退化成 "1-" 这类结果，
   # 甚至为空，无法用于锚点跳转。
   auto_ids: false
-  # 输出 <script type="math/tex"> 由 MathJax v2 渲染（见 _layouts/default.html）
+  # kramdown 只认 $$...$$ 这种数学定界符（单个 $ 是普通文本），
+  # 构建后会输出成 MathJax 能识别的 \(...\) / \[...\]（见 _layouts/default.html）
   math_engine: mathjax
   syntax_highlighter: rouge
 
