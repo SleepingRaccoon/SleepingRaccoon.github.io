@@ -1,0 +1,43 @@
+title: SleepingRaccoon
+tagline: 雷达信号处理 · CUDA · 工程实现
+description: 雷达信号处理、GPU 加速与工程实现的个人技术笔记。
+author: SleepingRaccoon
+email: 2765560574@qq.com
+lang: zh-CN
+timezone: Asia/Shanghai
+url: "https://sleepingraccoon.github.io"
+baseurl: ""
+
+# Markdown / 代码高亮
+markdown: kramdown
+kramdown:
+  input: GFM
+  # 标题 id 交给 assets/js/toc.js 统一生成：kramdown 的中文标题 id 会退化成 "1-" 这类结果，
+  # 甚至为空，无法用于锚点跳转。
+  auto_ids: false
+  # 输出 <script type="math/tex"> 由 MathJax v2 渲染（见 _layouts/default.html）
+  math_engine: mathjax
+  syntax_highlighter: rouge
+
+# 文章地址：/posts/<文件名去掉日期>/  例如 /posts/if-sampling-and-ddc/
+permalink: /posts/:title/
+
+# 新建文章时不必重复写 layout
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page
+
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .gitignore

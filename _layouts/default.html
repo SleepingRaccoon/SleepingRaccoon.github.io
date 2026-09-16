@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: 'zh-CN' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title and page.title != site.title %}{{ page.title }} · {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  {% if page.description %}
+  <meta name="description" content="{{ page.description | strip_html }}">
+  {% elsif site.description %}
+  <meta name="description" content="{{ site.description }}">
+  {% endif %}
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+  {% if site.url %}<link rel="canonical" href="{{ page.url | absolute_url }}">{% endif %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="site-title" href="{{ '/' | relative_url }}">
+        {{ site.title }}<span class="site-tagline">{% if site.tagline %} · {{ site.tagline }}{% endif %}</span>
+      </a>
+      <nav class="site-nav">
+        <a href="{{ '/' | relative_url }}">首页</a>
+        <a href="{{ '/about/' | relative_url }}">关于</a>
+        <a href="https://github.com/SleepingRaccoon">GitHub</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    {{ content }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <p>© {{ site.time | date: "%Y" }} {{ site.author }} · 本文使用 Markdown 撰写，公式由 MathJax 渲染</p>
+    </div>
+  </footer>
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      showMathMenu: false,
+      messageStyle: "none"
+    });
+  </script>
+  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script src="{{ '/assets/js/toc.js' | relative_url }}" defer></script>
+</body>
+</html>

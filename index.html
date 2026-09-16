@@ -1,0 +1,21 @@
+---
+layout: default
+title: 首页
+---
+<section class="home">
+  <h1>{{ site.title }}</h1>
+  <p class="lead">{{ site.description }}</p>
+
+  <h2 class="section-title">全部文章</h2>
+  <ul class="post-list">
+    {% for post in site.posts %}
+    <li>
+      <span class="post-date">{{ post.date | date: "%Y-%m-%d" }}</span>
+      <a class="post-link" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      {% if post.description %}
+      <p class="post-excerpt">{{ post.description }}</p>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+</section>
