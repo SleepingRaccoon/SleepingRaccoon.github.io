@@ -21,9 +21,11 @@ description: 严格区分物理实数域与数字复数域，从实射频发射�
 设雷达基带产生的LFM波形（在FPGA内部是数字复信号，但经DAC后输出物理实电压）表示为实余弦函数。为了严格，我们直接从发射的**实射频信号**出发：
 
 雷达发射的实射频信号为：
+
 $$
 s_{RF\_tx}(t) = \text{rect}\left(\frac{t}{T_p}\right) \cos\left(2\pi f_c t + \pi K t^2\right)
 $$
+
 其中 $$f_c$$ 是载频，$$K$$ 是调频斜率，$$\text{rect}$$ 是矩形包络。
 
 ---
@@ -31,9 +33,11 @@ $$
 ## 2. 接收端回波（物理实数世界）
 
 目标反射回波是发射信号的延迟副本，延迟时间为 $$\tau$$，幅度衰减为 $$A$$（此处 $$\tau$$ 为常数，不展开）：
+
 $$
 s_{RF\_rx}(t) = A \cdot \text{rect}\left(\frac{t-\tau}{T_p}\right) \cos\left[2\pi f_c (t-\tau) + \pi K (t-\tau)^2\right]
 $$
+
 此时，它依然是一个**纯粹的实电压信号**，频率在 $$f_c$$ 附近。
 
 ---
@@ -41,11 +45,13 @@ $$
 ## 3. 模拟下变频至中频（物理实数世界，无 I/Q）
 
 接收机采用**单通道实混频器**。本地振荡器（LO）产生一个实余弦信号，频率为 $$f_{LO} = f_c - f_{IF}$$：
+
 $$
 s_{LO}(t) = \cos(2\pi f_{LO} t) = \cos\left(2\pi (f_c - f_{IF}) t\right)
 $$
 
 将接收的实信号与实本振信号在模拟乘法器中相乘（混频）：
+
 $$
 s_{mix}(t) = s_{RF\_rx}(t) \times s_{LO}(t)
 $$
@@ -68,10 +74,13 @@ $$
 ## 4. ADC 带通采样（进入数字域，仍为实数）
 
 ADC对上述实中频信号进行采样，采样周期 $$T_s$$，得到实数字序列：
+
 $$
 s_{IF}(n) = s_{IF}(nT_s)
 $$
+
 代入得：
+
 $$
 \boxed{s_{IF}(n) = A \cdot \text{rect}\left(\frac{nT_s-\tau}{T_p}\right) \cos\left[2\pi f_{IF} nT_s - 2\pi f_c \tau + \pi K (nT_s-\tau)^2\right]}
 $$
@@ -95,26 +104,31 @@ $$
 将实中频信号分别与两路本振相乘，得到两路实混频输出：
 
 **I路（同相）**：
+
 $$
 I_{mix}(n) = s_{IF}(n) \cdot \cos(2\pi f_{IF} nT_s)
 $$
 
 **Q路（正交）**：
+
 $$
 Q_{mix}(n) = s_{IF}(n) \cdot \left[-\sin(2\pi f_{IF} nT_s)\right]
 $$
 
 为了看清基带分量，我们把 $$s_{IF}(n)$$ 的余弦展开（令总相位 $$\Theta(n) = -2\pi f_c \tau + \pi K (nT_s-\tau)^2$$）：
+
 $$
 s_{IF}(n) = A \cdot \text{rect}(\cdot) \cdot \cos\left[2\pi f_{IF} nT_s + \Theta(n)\right]
 $$
 
 **计算 I 路**（积化和差）：
+
 $$
 I_{mix}(n) = \frac{A}{2} \text{rect}(\cdot) \left[ \cos(\Theta(n)) + \cos(4\pi f_{IF} nT_s + \Theta(n)) \right]
 $$
 
 **计算 Q 路**（利用 $$\cos A \cdot (-\sin B) = -\frac{1}{2}[\sin(A+B) - \sin(A-B)]$$，其中 $$A=2\pi f_{IF} nT_s + \Theta$$，$$B=2\pi f_{IF} nT_s$$）：
+
 $$
 Q_{mix}(n) = \frac{A}{2} \text{rect}(\cdot) \left[ \sin(\Theta(n)) - \sin(4\pi f_{IF} nT_s + \Theta(n)) \right]
 $$
@@ -125,17 +139,20 @@ $$
 $$
 I(n) = I_{mix}(n) * h_{LPF} = \frac{A}{2} \text{rect}(\cdot) \cos(\Theta(n))
 $$
+
 $$
 Q(n) = Q_{mix}(n) * h_{LPF} = \frac{A}{2} \text{rect}(\cdot) \sin(\Theta(n))
 $$
 
 ### 5.4 构造复数基带信号（最终输出）
 此时，我们将这两路**实信号**组合成一个**复数序列**，定义为：
+
 $$
 \boxed{s_{BB}(n) = I(n) + j Q(n)}
 $$
 
 代入 $$\Theta(n)$$ 的具体表达式，得到最终的复基带信号：
+
 $$
 \boxed{s_{BB}(n) = \frac{A}{2} \cdot \text{rect}\left(\frac{nT_s-\tau}{T_p}\right) \cdot e^{j\left[\pi K (nT_s-\tau)^2 - 2\pi f_c \tau\right]}}
 $$
@@ -165,11 +182,13 @@ $$
 ## 8. 抽取的数学表达
 
 设抽取因子为 $$D$$（正整数），使得抽取后的新采样周期为：
+
 $$
 T_s' = D \cdot T_s
 $$
 
 滤波器输出（抽取前）为：
+
 $$
 s_{BB}(n) = \frac{A}{2} \cdot \text{rect}\left(\frac{nT_s-\tau}{T_p}\right) \cdot e^{j\left[\pi K (nT_s-\tau)^2 - 2\pi f_c \tau\right]}
 $$
@@ -212,6 +231,7 @@ $$
 $$
 \boxed{s_{out}(m) = \frac{A}{2} \cdot \text{rect}\left(\frac{mT_s' - \tau}{T_p}\right) \cdot e^{j\pi K (mT_s' - \tau)^2} \cdot e^{-j2\pi f_c \tau}}
 $$
+
 其中 $$T_s' \ge 1/B$$，且下标 $$m$$ 代表抽取后的慢速采样点（快时间维）。
 
 这一步做完，数据流才算真正准备好进入匹配滤波（脉冲压缩），也才符合标准雷达信号处理的数据流控制逻辑。
