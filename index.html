@@ -19,6 +19,7 @@ title: 首页
     {% endfor %}
   </div>
 
+  {% if site.posts.size > 0 %}
   <h2 class="section-title">全部文章</h2>
   <ul class="post-list">
     {% for post in site.posts %}
@@ -31,4 +32,5 @@ title: 首页
     </li>
     {% endfor %}
   </ul>
+  {% endif %}
 </section>

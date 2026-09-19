@@ -14,15 +14,16 @@
 │   ├── book.html        # 模块首页模板（一本书的目录页）
 │   ├── doc.html         # 模块内文档模板：左侧是整本书的篇目树
 │   └── page.html        # 单页模板（如「关于」）
-├── _posts/              # 所有文章，文件名必须是 YYYY-MM-DD-英文短名.md
-├── _radar/              # 模块《雷达信号处理入门》的文档
+├── _radar/              # 模块《雷达信号处理入门》的文档（技术内容主要放这里）
 ├── _cuda/               # 模块《CUDA 在雷达信号处理中的应用》的文档
+├── _posts/              # 可选：模块之外的零散文章（YYYY-MM-DD-英文短名.md）
 ├── radar/index.html     # 模块首页 /radar/
 ├── cuda/index.html      # 模块首页 /cuda/
+├── posts/               # 旧链接跳转页（换过网址的文章在这里留一个跳转）
 ├── assets/
 │   ├── css/site.css     # 全部样式
 │   └── js/toc.js        # 生成目录（h2/h3/h4）+ 滚动高亮
-├── index.html           # 首页：模块卡片 + 文章列表
+├── index.html           # 首页：模块卡片 +（有 _posts 时）文章列表
 ├── about.md             # 关于页
 └── 404.html             # 404 页
 ```
@@ -48,6 +49,11 @@ description: 一句话摘要，显示在模块目录页。
 
 正文用 `##` / `###` / `####` 写多级标题，侧栏会自动把**整本书的篇目**和**当前篇的章节**
 拼成一棵树，层级对应当前篇的标题层级。
+
+现在《雷达信号处理入门》里有两篇正文加一篇测试文档，顺序由 `order` 决定。
+首页的「全部文章」区只在 `_posts/` 下有文章时才显示；文章想归到书里，
+直接把 `.md` 从 `_posts/` 挪到 `_radar/`（补上 `title`、`order`、`description`）即可，
+旧网址用 `posts/<slug>/index.html` 里的 meta 跳转兜住。
 
 **新增一个模块**（第三本书）：在 `_config.yml` 的 `collections` 里加一项、
 在 `_data/books.yml` 里加一条、再建一个 `_新key/` 目录和 `<url>/index.html`（三行 front matter）即可。
