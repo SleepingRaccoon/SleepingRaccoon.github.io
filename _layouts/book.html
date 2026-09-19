@@ -1,0 +1,32 @@
+---
+layout: default
+---
+{% assign book_key = page.book %}
+{% assign book_meta = nil %}
+{% for b in site.data.books %}{% if b.key == book_key %}{% assign book_meta = b %}{% endif %}{% endfor %}
+{% assign book_coll = nil %}
+{% for c in site.collections %}{% if c.label == book_key %}{% assign book_coll = c %}{% endif %}{% endfor %}
+{% assign book_docs = book_coll.docs | sort: "order" %}
+<div class="book">
+  <header class="book-header">
+    <h1>{{ book_meta.title }}</h1>
+    <p class="lead">{{ book_meta.description }}</p>
+  </header>
+
+  <h2 class="section-title">目录（共 {{ book_docs | size }} 篇）</h2>
+  <ol class="book-toc">
+    {% for doc in book_docs %}
+    <li>
+      <a class="book-toc-link" href="{{ doc.url | relative_url }}">{{ doc.title }}</a>
+      {% if doc.description %}
+      <p class="post-excerpt">{{ doc.description }}</p>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+
+  <p class="book-note">
+    新增一篇：在 <code>_{{ page.book }}/</code> 下放一个 <code>.md</code> 文件，
+    写好 <code>title</code> 和 <code>order</code> 就会自动出现在这里。
+  </p>
+</div>

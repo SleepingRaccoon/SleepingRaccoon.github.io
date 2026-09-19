@@ -1,0 +1,11 @@
+# 首页上的模块列表，每个模块相当于一本独立的“书”
+# key 必须和 _config.yml 里的 collections 名称一致，也对应 _<key>/ 目录
+- key: radar
+  title: 雷达信号处理入门
+  description: 从中频采样、数字下变频一路讲到脉冲压缩与 MTD，按“一本书”的顺序组织，前后能接得上。
+  url: /radar/
+
+- key: cuda
+  title: CUDA 在雷达信号处理中的应用
+  description: 把雷达处理链路上的重活搬到 GPU：并行划分、访存优化，以及典型算子的 CUDA 实现与验证。
+  url: /cuda/

@@ -6,6 +6,19 @@ title: 首页
   <h1>{{ site.title }}</h1>
   <p class="lead">{{ site.description }}</p>
 
+  <h2 class="section-title">模块</h2>
+  <div class="module-grid">
+    {% for book in site.data.books %}
+    {% assign book_coll = nil %}
+    {% for c in site.collections %}{% if c.label == book.key %}{% assign book_coll = c %}{% endif %}{% endfor %}
+    <a class="module-card" href="{{ book.url | relative_url }}">
+      <h3>{{ book.title }}</h3>
+      <p>{{ book.description }}</p>
+      <p class="module-meta">{{ book_coll.docs | size }} 篇 · 查看目录 →</p>
+    </a>
+    {% endfor %}
+  </div>
+
   <h2 class="section-title">全部文章</h2>
   <ul class="post-list">
     {% for post in site.posts %}

@@ -161,11 +161,98 @@ main.wrap {
   line-height: 1.65;
 }
 
+/* 首页模块卡片 */
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 0 0 2.5rem;
+}
+
+.module-card {
+  display: block;
+  padding: 1.1rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-soft);
+  color: var(--fg);
+}
+
+.module-card:hover {
+  border-color: var(--link);
+  text-decoration: none;
+}
+
+.module-card h3 {
+  margin: 0 0 0.4rem;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.module-card p {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.module-card .module-meta {
+  margin-top: 0.7rem;
+  color: var(--link);
+  font-size: 0.78rem;
+}
+
 @media (max-width: 640px) {
   .post-date {
     display: block;
     min-width: 0;
   }
+}
+
+/* ---------- 模块（按“书”组织的页面） ---------- */
+
+.book-header h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.75rem;
+}
+
+.book-toc {
+  max-width: var(--content-width);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.book-toc > li {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.book-toc > li:last-child {
+  border-bottom: 0;
+}
+
+.book-toc-link {
+  font-size: 1.05rem;
+}
+
+.book-note {
+  max-width: var(--content-width);
+  margin: 2rem 0 0;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-soft);
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+}
+
+.book-note code {
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: #fff;
+  border: 1px solid var(--border);
+  font-size: 0.95em;
 }
 
 /* ---------- 文章布局 ---------- */
@@ -182,6 +269,20 @@ main.wrap {
   margin: 0 0 0.5rem;
   font-size: 1.85rem;
   line-height: 1.35;
+}
+
+.post-kicker {
+  margin: 0 0 0.4rem;
+  font-size: 0.85rem;
+}
+
+.post-kicker a {
+  color: var(--fg-muted);
+}
+
+.post-kicker a:hover {
+  color: var(--link);
+  text-decoration: none;
 }
 
 .post-meta {
@@ -366,6 +467,15 @@ main.wrap {
   letter-spacing: 0.08em;
 }
 
+.toc-title a {
+  color: var(--fg-muted);
+}
+
+.toc-title a:hover {
+  color: var(--link);
+  text-decoration: none;
+}
+
 .toc-empty {
   margin: 0;
   color: var(--fg-muted);
@@ -403,6 +513,43 @@ main.wrap {
 .toc-list .lvl-2 a {
   padding-left: 1.4rem;
   font-size: 0.9em;
+}
+
+.toc-list .lvl-3 a {
+  padding-left: 2.2rem;
+  font-size: 0.86em;
+}
+
+/* 书籍侧栏：整本书的篇目 + 当前篇的章节 */
+.book-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.book-item > a {
+  display: block;
+  padding: 0.25rem 0 0.25rem 0.55rem;
+  border-left: 2px solid transparent;
+  color: var(--fg-muted);
+  line-height: 1.45;
+}
+
+.book-item > a:hover {
+  color: var(--link);
+  text-decoration: none;
+}
+
+.book-item.is-current > a {
+  border-left-color: var(--link);
+  color: var(--link);
+  font-weight: 600;
+}
+
+.book-item .toc-list {
+  margin: 0.1rem 0 0.4rem;
+  border-left: 1px solid var(--border);
+  margin-left: 0.15rem;
 }
 
 @media (max-width: 900px) {

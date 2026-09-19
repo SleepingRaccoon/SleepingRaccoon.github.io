@@ -6,19 +6,51 @@
 
 ```
 .
-├── _config.yml          # 站点配置（标题、permalink、kramdown 等）
+├── _config.yml          # 站点配置（标题、permalink、collections、kramdown 等）
+├── _data/books.yml      # 首页两个模块（书）的标题、简介、链接
 ├── _layouts/
 │   ├── default.html     # 页面外壳：头部导航、页脚、MathJax、目录脚本
 │   ├── post.html        # 文章模板：标题、日期、标签、右侧目录
+│   ├── book.html        # 模块首页模板（一本书的目录页）
+│   ├── doc.html         # 模块内文档模板：左侧是整本书的篇目树
 │   └── page.html        # 单页模板（如「关于」）
 ├── _posts/              # 所有文章，文件名必须是 YYYY-MM-DD-英文短名.md
+├── _radar/              # 模块《雷达信号处理入门》的文档
+├── _cuda/               # 模块《CUDA 在雷达信号处理中的应用》的文档
+├── radar/index.html     # 模块首页 /radar/
+├── cuda/index.html      # 模块首页 /cuda/
 ├── assets/
 │   ├── css/site.css     # 全部样式
-│   └── js/toc.js        # 生成每篇文章的目录 + 滚动高亮
-├── index.html           # 首页文章列表
+│   └── js/toc.js        # 生成目录（h2/h3/h4）+ 滚动高亮
+├── index.html           # 首页：模块卡片 + 文章列表
 ├── about.md             # 关于页
 └── 404.html             # 404 页
 ```
+
+## 模块（两本书）
+
+首页上半部分是两个模块，各自相当于一本独立的书，互不依赖，各自有目录、篇目和章节层级：
+
+| 模块 | 网址 | 文档目录 |
+| :--- | :--- | :--- |
+| 雷达信号处理入门 | `/radar/` | `_radar/` |
+| CUDA 在雷达信号处理中的应用 | `/cuda/` | `_cuda/` |
+
+**新增一篇**：在对应目录下放一个 `.md`，导航和目录页会自动收录，`layout` 不用写：
+
+```yaml
+---
+title: 中频采样
+order: 2                # 篇目顺序，小的在前
+description: 一句话摘要，显示在模块目录页。
+---
+```
+
+正文用 `##` / `###` / `####` 写多级标题，侧栏会自动把**整本书的篇目**和**当前篇的章节**
+拼成一棵树，层级对应当前篇的标题层级。
+
+**新增一个模块**（第三本书）：在 `_config.yml` 的 `collections` 里加一项、
+在 `_data/books.yml` 里加一条、再建一个 `_新key/` 目录和 `<url>/index.html`（三行 front matter）即可。
 
 ## 写一篇新文章
 

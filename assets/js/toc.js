@@ -1,6 +1,6 @@
 /*
  * 目录生成：
- * 1. 给正文里的 h2 / h3 分配稳定 id（sec-1、sec-2 ……）
+ * 1. 给正文里的 h2 / h3 / h4 分配稳定 id（sec-1、sec-2 ……）
  * 2. 用它们拼出右侧目录，并加一个可点击的锚点
  * 3. 滚动时高亮当前小节
  *
@@ -17,12 +17,16 @@
       return;
     }
 
-    var headings = body.querySelectorAll('h2, h3');
+    var headings = body.querySelectorAll('h2, h3, h4');
     if (!headings.length) {
       var empty = document.getElementById('toc-empty');
-      var title = document.getElementById('toc-title');
       if (empty) { empty.hidden = false; }
-      if (title) { title.hidden = true; }
+      // 书籍侧栏里的标题是书名，空了也不能藏；只有文章目录才藏
+      var toc = document.getElementById('toc');
+      if (toc && toc.hasAttribute('data-hide-title-when-empty')) {
+        var title = document.getElementById('toc-title');
+        if (title) { title.hidden = true; }
+      }
       return;
     }
 
@@ -40,7 +44,7 @@
       heading.appendChild(anchor);
 
       var item = document.createElement('li');
-      item.className = heading.tagName === 'H3' ? 'lvl-2' : 'lvl-1';
+      item.className = 'lvl-' + ({ H2: 1, H3: 2, H4: 3 })[heading.tagName];
 
       var link = document.createElement('a');
       link.href = '#' + id;

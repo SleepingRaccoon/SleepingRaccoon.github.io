@@ -23,6 +23,16 @@ kramdown:
 # 文章地址：/posts/<文件名去掉日期>/  例如 /posts/if-sampling-and-ddc/
 permalink: /posts/:title/
 
+# 模块（当作两本独立的“书”，每个模块有自己的目录树）
+# 文档放在 _radar/ 、_cuda/ 下，书名与简介见 _data/books.yml
+collections:
+  radar:
+    output: true
+    permalink: /radar/:path/
+  cuda:
+    output: true
+    permalink: /cuda/:path/
+
 # 新建文章时不必重复写 layout
 defaults:
   - scope:
@@ -35,6 +45,18 @@ defaults:
       type: pages
     values:
       layout: page
+  - scope:
+      path: ""
+      type: radar
+    values:
+      layout: doc
+      book: radar
+  - scope:
+      path: ""
+      type: cuda
+    values:
+      layout: doc
+      book: cuda
 
 exclude:
   - README.md
