@@ -4,7 +4,7 @@ order: 1
 description: 搜集网上各类散列教程，汇编成册
 ---
 
-# 1 先从基本概念入手
+## 1 先从基本概念入手
 
 - [开篇：为什么学CUDA？](https://zhuanlan.zhihu.com/p/2010396082744624644)
 - [CUDA编程模型：Grid、Block、Thread的前世今生](https://zhuanlan.zhihu.com/p/2010714643467871066)
@@ -12,15 +12,15 @@ description: 搜集网上各类散列教程，汇编成册
 - [GPUKernel第一课：Roofline](https://zhuanlan.zhihu.com/p/2074137890158913526)
 - [深入SIMT执行模型：Warp、分支与占用率](https://zhuanlan.zhihu.com/p/2012210771661181752)
 
-# 2 学会几个简单的基本内核
+## 2 学会几个简单的基本内核
 
 
-# 3 学会使用NVIDIA Nsight工具
+## 3 学会使用 NVIDIA Nsight 工具
 
 - [CUDA性能分析实战：Nsight Systems和Nsight Compute入门](https://zhuanlan.zhihu.com/p/2025619489903900661)
 
 
-# 2 CUTLASS
+## 4 CUTLASS
 
 
 

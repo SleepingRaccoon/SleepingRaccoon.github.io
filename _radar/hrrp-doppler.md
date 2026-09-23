@@ -1,6 +1,6 @@
 ---
 title: Dechirp 宽带雷达成像：HRRP 与距离-速度耦合
-order: 2
+order: 11
 description: 从基带回波严格推到 RD 图：参考信号怎么选、共轭相乘的方向、快慢时间 FFT 的近似条件，以及距离-速度耦合项的来源与补偿。
 ---
 
