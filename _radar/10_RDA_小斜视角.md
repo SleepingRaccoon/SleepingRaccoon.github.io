@@ -29,17 +29,17 @@ description: 从小斜视基带回波出发，讲清距离压缩、方位 FFT、
 雷达接收解调后的基带信号模型为
 
 $$
- s_0(\tau, \eta) = A_0 w_r\left[\tau - \frac{2R(\eta)}{c}\right] w_a(\eta - \eta_c) \exp\left\lbrace-j \frac{4\pi f_0 R(\eta)}{c}\right\rbrace \exp\left\lbracej \pi K_r \left(\tau - \frac{2R(\eta)}{c}\right)^2\right\rbrace \tag{1}
+    s_0(\tau, \eta) = A_0 w_r\left[\tau - \frac{2R(\eta)}{c}\right] w_a(\eta - \eta_c) \exp\left\lbrace-j \frac{4\pi f_0 R(\eta)}{c}\right\rbrace \exp\left\lbrace j \pi K_r \left(\tau - \frac{2R(\eta)}{c}\right)^2\right\rbrace \tag{1}
 $$
 
 其中 $A_0$ 是**复数幅度**：发射功率、天线增益、目标 RCS、接收链路增益与固定相移都归到它里面。在一个 CPI 内这些量都视为常数，所以下面推导只关心相位，幅度一概并进 $A_0$ 不展开。
 
 式(1)里有两类因子，一类管"信号长什么样"，一类管"相位随慢时间怎么变"：
 
-*   $w_r\left[\tau - \dfrac{2R(\eta)}{c}\right]$ 和 $\exp\left\lbracej \pi K_r \left(\tau - \dfrac{2R(\eta)}{c}\right)^2\right\rbrace$：**被时延整体搬移的一段脉冲**。距离窗只是这段 LFM 的"存在范围"，LFM 的中心和窗的中心都在 $\tau = 2R(\eta)/c$ 上，两者由同一个时延一起搬移。所以要把它们当一个整体：随 $\eta$ 缓慢移动的就是这一整段脉冲。距离压缩能把这个"块"压成尖峰，但**压不掉它在慢时间上的移动**——这正是后面距离徙动的来源，也是 RCMC 必须存在的理由。
+*   $w_r\left[\tau - \dfrac{2R(\eta)}{c}\right]$ 和 $\exp\left\lbrace j \pi K_r \left(\tau - \dfrac{2R(\eta)}{c}\right)^2\right\rbrace$：**被时延整体搬移的一段脉冲**。距离窗只是这段 LFM 的"存在范围"，LFM 的中心和窗的中心都在 $\tau = 2R(\eta)/c$ 上，两者由同一个时延一起搬移。所以要把它们当一个整体：随 $\eta$ 缓慢移动的就是这一整段脉冲。距离压缩能把这个"块"压成尖峰，但**压不掉它在慢时间上的移动**——这正是后面距离徙动的来源，也是 RCMC 必须存在的理由。
 *   $\exp\left\lbrace-j \dfrac{4\pi f_0 R(\eta)}{c}\right\rbrace$：**载频相位**。它随慢时间变化，是多普勒（方位向 LFM）的来源。
 
-距离压缩在频域完成：对 $\tau$ 做 FFT，乘以频域匹配滤波器 $H(f_\tau) = \exp\lbracej \pi f_\tau^2 / K_r\rbrace$，再 IFFT 回时域。
+距离压缩在频域完成：对 $\tau$ 做 FFT，乘以频域匹配滤波器 $H(f_\tau) = \exp\lbrace j \pi f_\tau^2 / K_r\rbrace$，再 IFFT 回时域。
 
 **POSP 推导驻定点。** 对 $\tau$ 做 FFT，需要计算积分 $\int s_0(\tau,\eta) \exp\lbrace-j 2\pi f_\tau \tau\rbrace d\tau$。总相位为
 
@@ -74,7 +74,7 @@ $$
 其中三项分别是：
 *   $W_r(f_\tau)$：距离窗 $w_r$ 经驻点 $\tau^{\ast}$ 尺缩后的频域形式。窗的自变量在驻点处取值 $\left.(\tau - 2R/c)\right\rvert_{\tau=\tau^{\ast}} = f_\tau/K_r$，所以 $w_r\left[\tau - 2R(\eta)/c\right]$ 变成 $w_r(f_\tau/K_r)$，记作 $W_r(f_\tau)$。
 *   $\Theta(\tau^{\ast})$：驻点处的总相位，展开就是式(5)。
-*   $\Theta''$：式(3)再求一次导，$\Theta'' = 2\pi K_r$ 是常数，所以这两个因子只跟 $K_r$ 有关，是固定增益与固定相移，与 $f_\tau$ 无关，并进 $A_0$ 即可。
+*   $\Theta\prime\prime $：式(3)再求一次导，$\Theta\prime\prime  = 2\pi K_r$ 是常数，所以这两个因子只跟 $K_r$ 有关，是固定增益与固定相移，与 $f_\tau$ 无关，并进 $A_0$ 即可。
 
 （驻定相位原理见[《驻定相位原理》](../radar/驻定相位原理/)。）于是距离 FFT 后
 
@@ -88,11 +88,11 @@ $$
  S_0(f_\tau, \eta) H(f_\tau) = A_0 W_r(f_\tau) \exp\left\lbrace-j \frac{4\pi f_\tau R(\eta)}{c}\right\rbrace \exp\left\lbrace-j \frac{4\pi f_0 R(\eta)}{c}\right\rbrace \tag{7}
 $$
 
-**IFFT 回时域。** 对 $f_\tau$ 做 IFFT，需要计算积分 $\int S_0 H \exp\lbracej 2\pi f_\tau \tau\rbrace df_\tau$。二次相位已经被匹配滤波抵消，剩下的相位对 $f_\tau$ 是线性的，没有驻点，直接积分；只是 $W_r(f_\tau)$ 没有具体形式，这个积分写不出解析式，直接把它记成距离向冲激响应 $p_r$：
+**IFFT 回时域。** 对 $f_\tau$ 做 IFFT，需要计算积分 $\int S_0 H \exp\lbrace j 2\pi f_\tau \tau\rbrace df_\tau$。二次相位已经被匹配滤波抵消，剩下的相位对 $f_\tau$ 是线性的，没有驻点，直接积分；只是 $W_r(f_\tau)$ 没有具体形式，这个积分写不出解析式，直接把它记成距离向冲激响应 $p_r$：
 
 $$
  p_r\left[\tau - \frac{2R(\eta)}{c}\right]
- = \int W_r(f_\tau) \exp\left\lbracej 2\pi f_\tau \left[\tau - \frac{2R(\eta)}{c}\right]\right\rbrace df_\tau \tag{8}
+ = \int W_r(f_\tau) \exp\left\lbrace j 2\pi f_\tau \left[\tau - \frac{2R(\eta)}{c}\right]\right\rbrace df_\tau \tag{8}
 $$
 
 压缩后信号为
@@ -138,7 +138,7 @@ $$
  \eta^{*} = -\frac{f_\eta}{K_a} \tag{14}
 $$
 
-二阶导 $\Theta'' = -2\pi K_a$ 同样只贡献常数。把驻点 $\eta^{\ast}$ 代回总相位，得到频域相位：
+二阶导 $\Theta\prime\prime  = -2\pi K_a$ 同样只贡献常数。把驻点 $\eta^{\ast}$ 代回总相位，得到频域相位：
 
 $$
  \Theta(f_\eta) = -\pi K_a \left(-\frac{f_\eta}{K_a}\right)^2 - 2\pi f_\eta \left(-\frac{f_\eta}{K_a}\right) = \pi \frac{f_\eta^2}{K_a} \tag{15}
@@ -153,12 +153,12 @@ $$
 其中三项分别是：
 *   $W_a(f_\eta - f_{\eta_c})$：方位窗 $w_a$ 经驻点 $\eta^{\ast}$ 尺缩后的频域形式，与 $w_r \to W_r$ 同一回事。
 *   $\Theta(\eta^{\ast})$：驻点处的总相位，展开就是式(15)。
-*   $\Theta'' = -2\pi K_a$ 是常数，所以这两个因子只跟 $K_a$ 有关，一起并入 $A_0$ 即可。
+*   $\Theta\prime\prime  = -2\pi K_a$ 是常数，所以这两个因子只跟 $K_a$ 有关，一起并入 $A_0$ 即可。
 
 **距离多普勒域信号。** 方位 FFT 之后，信号带上距离徙动与方位频域包络：
 
 $$
- S_1(\tau, f_\eta) = A_0 p_r\left[\tau - \frac{2R_{rd}(f_\eta)}{c}\right] W_a(f_\eta - f_{\eta_c}) \exp\left\lbrace-j \frac{4\pi f_0 R_0}{c}\right\rbrace \exp\left\lbracej \pi \frac{f_\eta^2}{K_a}\right\rbrace \tag{16}
+ S_1(\tau, f_\eta) = A_0 p_r\left[\tau - \frac{2R_{rd}(f_\eta)}{c}\right] W_a(f_\eta - f_{\eta_c}) \exp\left\lbrace-j \frac{4\pi f_0 R_0}{c}\right\rbrace \exp\left\lbrace j \pi \frac{f_\eta^2}{K_a}\right\rbrace \tag{16}
 $$
 
 瞬时斜距在频域表现为
@@ -178,7 +178,7 @@ RCMC 的目标是把式(16)包络里的 $p_r[\tau - 2(R_0 + \Delta R(f_\eta))/c]
 
 **插值不是卷积。** 插值是重采样，改变的是采样点的位置；卷积保持采样点不动，改变的是波形形状。对带限信号做偏移 $\Delta \tau$ 的重采样，可以写成原采样点的加权求和，权值是 sinc 核。之所以不直接用 FFT 做快速卷积实现这一步，是因为这里的插值核随距离和方位频率变化（空变），或者需要很长的核才能保证精度，代价太大。
 
-**做法一：距离多普勒域 sinc 插值。** 对每个 $f_\eta$ 算出距离偏移 $\Delta \tau = 2\Delta R(f_\eta)/c$。原采样点 $\tau_n$，新采样点 $\tau_m' = \tau_m + \Delta \tau$，则
+**做法一：距离多普勒域 sinc 插值。** 对每个 $f_\eta$ 算出距离偏移 $\Delta \tau = 2\Delta R(f_\eta)/c$。原采样点 $\tau_n$，新采样点 $\tau_m\prime  = \tau_m + \Delta \tau$，则
 
 $$
  S_2(\tau_m', f_\eta) = \sum_{n} S_1(\tau_n, f_\eta) \cdot \text{sinc}\left[ B_r (\tau_m' - \tau_n) \right] \tag{19}
@@ -189,7 +189,7 @@ $$
 **做法二：距离频域相位相乘。** 傅里叶变换的时移性质是 $x(\tau - \tau_0) \leftrightarrow X(f_\tau) \exp\lbrace-j 2\pi f_\tau \tau_0\rbrace$。要实现距离偏移 $2\Delta R(f_\eta)/c$，在距离频域乘
 
 $$
- G_{rcmc}(f_\tau) = \exp\left\lbracej \frac{4\pi f_\tau \Delta R(f_\eta)}{c}\right\rbrace \tag{20}
+ G_{rcmc}(f_\tau) = \exp\left\lbrace j \frac{4\pi f_\tau \Delta R(f_\eta)}{c}\right\rbrace \tag{20}
 $$
 
 这个做法假设在一个有限的距离块内 $\Delta R(f_\eta)$ 不随 $R_0$ 变化，所以数据要沿距离向分块、块间重叠以消除边界效应。好处是能用 FFT 快速实现，代价是分块和重叠带来额外复杂度。
@@ -198,7 +198,7 @@ $$
 RCMC 之后（假设已校正干净），信号变成
 
 $$
- S_2(\tau, f_\eta) = A_0 p_r\left(\tau - \frac{2R_0}{c}\right) W_a(f_\eta - f_{\eta_c}) \exp\left\lbrace-j \frac{4\pi f_0 R_0}{c}\right\rbrace \exp\left\lbracej \pi \frac{f_\eta^2}{K_a}\right\rbrace \tag{21}
+ S_2(\tau, f_\eta) = A_0 p_r\left(\tau - \frac{2R_0}{c}\right) W_a(f_\eta - f_{\eta_c}) \exp\left\lbrace-j \frac{4\pi f_0 R_0}{c}\right\rbrace \exp\left\lbrace j \pi \frac{f_\eta^2}{K_a}\right\rbrace \tag{21}
 $$
 
 **方位匹配滤波。** 取式(21)中第二个指数项的复共轭作为滤波器：
@@ -213,12 +213,12 @@ $$
  S_3(\tau, f_\eta) = S_2(\tau, f_\eta) H_{az}(f_\eta) = A_0 p_r\left(\tau - \frac{2R_0}{c}\right) W_a(f_\eta - f_{\eta_c}) \exp\left\lbrace-j \frac{4\pi f_0 R_0}{c}\right\rbrace \tag{23}
 $$
 
-**方位 IFFT 与最终图像。** 对 $f_\eta$ 做 IFFT，此时相位对 $f_\eta$ 是线性的，没有驻点，直接积分。$W_a(f_\eta - f_{\eta_c})$ 对应时域 $w_a(\eta) \exp\lbracej 2\pi f_{\eta_c} \eta\rbrace$，于是得到二维压缩图像
+**方位 IFFT 与最终图像。** 对 $f_\eta$ 做 IFFT，此时相位对 $f_\eta$ 是线性的，没有驻点，直接积分。$W_a(f_\eta - f_{\eta_c})$ 对应时域 $w_a(\eta) \exp\lbrace j 2\pi f_{\eta_c} \eta\rbrace$，于是得到二维压缩图像
 
 $$
- s_{ac}(\tau, \eta) = A_0 p_r\left(\tau - \frac{2R_0}{c}\right) p_a(\eta) \exp\left\lbrace-j \frac{4\pi f_0 R_0}{c}\right\rbrace \exp\lbracej 2\pi f_{\eta_c} \eta\rbrace \tag{24}
+ s_{ac}(\tau, \eta) = A_0 p_r\left(\tau - \frac{2R_0}{c}\right) p_a(\eta) \exp\left\lbrace-j \frac{4\pi f_0 R_0}{c}\right\rbrace \exp\lbrace j 2\pi f_{\eta_c} \eta\rbrace \tag{24}
 $$
 
 其中 $p_a(\eta)$ 是方位冲激响应。
 *   包络 $p_r$ 把目标聚焦在 $\tau = 2R_0/c$，而且与 $f_\eta$ 无关，说明 RCM 已经校正掉。
-*   包络 $p_a$ 把目标聚焦在 $\eta = 0$，也就是零多普勒位置。残余的线性相位 $\exp\lbracej 2\pi f_{\eta_c} \eta\rbrace$ 在 $\eta = 0$ 处为零；斜视时这一项不为零，做干涉、极化这类需要保留相位关系的处理时要先补偿掉。
+*   包络 $p_a$ 把目标聚焦在 $\eta = 0$，也就是零多普勒位置。残余的线性相位 $\exp\lbrace j 2\pi f_{\eta_c} \eta\rbrace$ 在 $\eta = 0$ 处为零；斜视时这一项不为零，做干涉、极化这类需要保留相位关系的处理时要先补偿掉。
