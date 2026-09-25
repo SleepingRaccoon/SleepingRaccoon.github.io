@@ -59,6 +59,8 @@ foreach ($file in $files) {
     $parts = $line -split '\$'
     for ($k = 1; $k -lt $parts.Count; $k += 2) {
       $parts[$k] = [regex]::Replace($parts[$k], '\|([^|]+)\|', '\lvert $1 \rvert')
+      # $...$ 里的 * 会被 kramdown 当成斜体标记插 <em>，公式随之失效（例如 \tau^{*}）
+      $parts[$k] = $parts[$k].Replace('*', '\ast')
     }
     $lines[$i] = ($parts -join '$')
   }
