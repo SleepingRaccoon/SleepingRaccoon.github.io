@@ -10,6 +10,10 @@
 (function () {
   'use strict';
 
+  // buildToc 建好的节点，供 MathJax 排版完成后刷新文字用
+  var tocHeadings = null;
+  var tocLinks = null;
+
   /*
    * 取标题文本。
    * 标题里可能含公式：MathJax 会就地把公式渲染出来，同时把原文留在一个隐藏的
@@ -76,7 +80,37 @@
       links.push(link);
     });
 
+    tocHeadings = headings;
+    tocLinks = links;
     highlightOnScroll(headings, links);
+  }
+
+  /*
+   * buildToc 在 DOMContentLoaded 就跑，而 MathJax 是异步加载并延后排版的：
+   * 标题里若含公式（如 $t_0 = 0$、$t = \tau$），此刻只能拿到原始 TeX，
+   * 目录里就会出现带反斜杠的源码。等 MathJax 排版结束再刷一遍文字即可。
+   */
+  function refreshTocText() {
+    if (!tocHeadings || !tocLinks) {
+      return;
+    }
+    Array.prototype.forEach.call(tocHeadings, function (heading, i) {
+      if (tocLinks[i]) {
+        tocLinks[i].textContent = headingText(heading);
+      }
+    });
+  }
+
+  function hookMathJax(triesLeft) {
+    if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Register) {
+      window.MathJax.Hub.Register.MessageHook('End Typeset', function () {
+        refreshTocText();
+      });
+      return;
+    }
+    if (triesLeft > 0) {
+      window.setTimeout(function () { hookMathJax(triesLeft - 1); }, 100);
+    }
   }
 
   function highlightOnScroll(headings, links) {
@@ -116,4 +150,6 @@
   } else {
     buildToc();
   }
+  // MathJax 是异步加载的，这里轮询等它出现，再挂上"排版结束"的回调
+  hookMathJax(50);
 })();
