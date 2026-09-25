@@ -441,6 +441,63 @@ main.wrap {
   padding-bottom: 0.25rem;
 }
 
+/* ---------- 窄屏适配 ---------- */
+
+/* flex/grid 子项默认 min-width:auto，会被 MathJax 的 <nobr>、长表格、
+   长链接顶宽，导致整页横向溢出。显式允许收缩，再让内容自己滚动。 */
+.post,
+.post-aside,
+.book,
+.home,
+.page,
+.notfound {
+  min-width: 0;
+}
+
+.post-layout > * {
+  min-width: 0;
+}
+
+.post-body p,
+.post-body li,
+.post-body td,
+.post-body th,
+.post-body a,
+.book-note {
+  overflow-wrap: break-word;
+}
+
+.post-body .MathJax_Display {
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* 表格在窄屏里横向滚动，而不是把整页顶宽 */
+@media (max-width: 700px) {
+  .post-body table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .post-body table th,
+  .post-body table td {
+    white-space: nowrap;
+  }
+
+  .post-header h1 {
+    font-size: 1.55rem;
+  }
+
+  .post-body h2 {
+    font-size: 1.2rem;
+  }
+
+  .module-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ---------- 目录 ---------- */
 
 .post-aside {
