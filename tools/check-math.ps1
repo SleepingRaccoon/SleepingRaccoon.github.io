@@ -71,6 +71,9 @@ foreach ($file in $files) {
       if ($seg -match '\\[\(\[]') {
         "  [$($file.Name):$($i + 1)] 用了 \\( \\) 或 \\[ \\]（网站上不渲染）：$($seg.Trim())"; $problems++
       }
+      if ($seg -match '\[\^[^\]]+\]') {
+        "  [$($file.Name):$($i + 1)] 用了脚注 [^n]（本站的 kramdown/GFM 不渲染脚注）：$($seg.Trim())"; $problems++
+      }
       if ($seg -match '\S\$\$[^$]+\$\$' -or $seg -match '\$\$[^$]+\$\$\S') {
         "  [$($file.Name):$($i + 1)] 行内写了 \$\$x\$\$（编辑器预览不认）：$($seg.Trim())"; $problems++
       }

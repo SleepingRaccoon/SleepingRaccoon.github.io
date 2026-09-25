@@ -41,7 +41,7 @@ $$
 
 距离压缩在频域完成：对 $\tau$ 做 FFT，乘以频域匹配滤波器 $H(f_\tau) = \exp\lbrace j \pi f_\tau^2 / K_r\rbrace$，再 IFFT 回时域。
 
-**POSP 推导驻定点。** 对 $\tau$ 做 FFT，需要计算积分 $\int s_0(\tau,\eta) \exp\lbrace-j 2\pi f_\tau \tau\rbrace d\tau$。总相位为
+**POSP 推导驻定点。**（原理见《[驻定相位原理](/radar/01_驻定相位原理/)》）对 $\tau$ 做 FFT，需要计算积分 $\int s_0(\tau,\eta) \exp\lbrace-j 2\pi f_\tau \tau\rbrace d\tau$。总相位为
 
 $$
  \Theta(\tau) = \pi K_r \left[\tau - \frac{2R(\eta)}{c}\right]^2 - 2\pi f_\tau \tau \tag{2}
@@ -62,7 +62,7 @@ $$
 把驻点 $\tau^{\ast}$ 代回总相位 $\Theta(\tau)$，得到频域相位：
 
 $$
- \Theta(f_\tau) = \pi K_r \left(\frac{f_\tau}{K_r}\right)^2 - 2\pi f_\tau \left(\frac{2R(\eta)}{c} + \frac{f_\tau}{K_r}\right) = -\pi \frac{f_\tau^2}{K_r} - \frac{4\pi f_\tau R(\eta)}{c} \tag{5}
+ \Theta(\tau^{*}) = \pi K_r \left(\frac{f_\tau}{K_r}\right)^2 - 2\pi f_\tau \left(\frac{2R(\eta)}{c} + \frac{f_\tau}{K_r}\right) = -\pi \frac{f_\tau^2}{K_r} - \frac{4\pi f_\tau R(\eta)}{c} \tag{5}
 $$
 
 这个积分的驻定相位形式写全了是
@@ -76,7 +76,7 @@ $$
 *   $\Theta(\tau^{\ast})$：驻点处的总相位，展开就是式(5)。
 *   $\Theta^{\prime\prime}$：式(3)再求一次导，$\Theta^{\prime\prime}= 2\pi K_r$ 是常数，所以这两个因子只跟 $K_r$ 有关，是固定增益与固定相移，与 $f_\tau$ 无关，并进 $A_0$ 即可。
 
-（驻定相位原理见[《驻定相位原理》](/radar/01_驻定相位原理/)。）于是距离 FFT 后
+于是距离 FFT 后
 
 $$
  S_0(f_\tau, \eta) = A_0 W_r(f_\tau) \exp\left\lbrace-j \pi \frac{f_\tau^2}{K_r}\right\rbrace \exp\left\lbrace-j \frac{4\pi f_\tau R(\eta)}{c}\right\rbrace \exp\left\lbrace-j \frac{4\pi f_0 R(\eta)}{c}\right\rbrace \tag{6}
@@ -141,7 +141,7 @@ $$
 二阶导 $\Theta^{\prime\prime}= -2\pi K_a$ 同样只贡献常数。把驻点 $\eta^{\ast}$ 代回总相位，得到频域相位：
 
 $$
- \Theta(f_\eta) = -\pi K_a \left(-\frac{f_\eta}{K_a}\right)^2 - 2\pi f_\eta \left(-\frac{f_\eta}{K_a}\right) = \pi \frac{f_\eta^2}{K_a} \tag{15}
+ \Theta(\eta^{*}) = -\pi K_a \left(-\frac{f_\eta}{K_a}\right)^2 - 2\pi f_\eta \left(-\frac{f_\eta}{K_a}\right) = \pi \frac{f_\eta^2}{K_a} \tag{15}
 $$
 
 与距离向同理，这个积分的驻定相位形式写全了是
