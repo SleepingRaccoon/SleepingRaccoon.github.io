@@ -47,7 +47,31 @@
       messageStyle: "none"
     });
   </script>
-  <script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script>
+    /*
+     * MathJax 走 CDN。某个域名被墙或抽风时，公式会整片显示成裸文本，
+     * 所以这里按顺序回退：cdnjs → jsDelivr → unpkg。
+     */
+    (function () {
+      var config = 'TeX-AMS-MML_HTMLorMML';
+      var sources = [
+        'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=' + config,
+        'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=' + config,
+        'https://unpkg.com/mathjax@2.7.9/MathJax.js?config=' + config
+      ];
+      var i = 0;
+      (function load() {
+        if (i >= sources.length) {
+          return;
+        }
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = sources[i++];
+        script.onerror = load;
+        document.head.appendChild(script);
+      })();
+    })();
+  </script>
   <script src="{{ '/assets/js/toc.js' | relative_url }}" defer></script>
 </body>
 </html>

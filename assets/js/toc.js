@@ -10,6 +10,24 @@
 (function () {
   'use strict';
 
+  /*
+   * 取标题文本。
+   * 标题里可能含公式：MathJax 会就地把公式渲染出来，同时把原文留在一个隐藏的
+   * 预览节点里，直接读 textContent 会把同一个公式读两遍（如 "X(f,i)X(f,i)"）。
+   * 所以先克隆一份、剔掉隐藏副本与脚本，再取文本；若 MathJax 还没渲染完，
+   * 此时拿到的是原始 "$$X(f,i)$$"，去掉 $ 同样是 "X(f,i)"。
+   */
+  function headingText(heading) {
+    var clone = heading.cloneNode(true);
+    var junk = clone.querySelectorAll('script, .MathJax_Preview, .header-anchor');
+    Array.prototype.forEach.call(junk, function (node) {
+      if (node.parentNode) {
+        node.parentNode.removeChild(node);
+      }
+    });
+    return clone.textContent.replace(/\$/g, '').replace(/\s+/g, ' ').trim();
+  }
+
   function buildToc() {
     var body = document.querySelector('.post-body');
     var list = document.getElementById('toc-list');
@@ -33,7 +51,7 @@
     var links = [];
     Array.prototype.forEach.call(headings, function (heading, i) {
       var id = 'sec-' + (i + 1);
-      var text = heading.textContent.trim();
+      var text = headingText(heading);
       heading.id = id;
 
       var anchor = document.createElement('a');
