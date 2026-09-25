@@ -613,6 +613,9 @@ main.wrap {
   .post-layout {
     display: flex;
     flex-direction: column;
+    /* 基础规则里的 align-items:start 是给 grid 用的；换成 flex 后必须改回 stretch，
+       否则子项按内容宽度撑开，长公式/长表格会把整页顶宽 */
+    align-items: stretch;
     gap: 1.5rem;
   }
 
