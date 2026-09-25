@@ -119,32 +119,13 @@ $$
 
 式(10)(11)合起来等价于 $\sum_i X(f,i)\,D_N\left(n - i/\alpha\right)$（$D_N$ 为 Dirichlet 核），与式(9)是同一件事，只是第二步能用 FFT。
 
-**做法三：CZT。** 用 Chirp-Z 变换把式(10)也算成 FFT。沿 $z$ 平面螺旋线 $z_k = AW^{-k}$ 的 CZT 定义为
+**做法三：CZT。** 式(10)是"在单位圆上按 $1/\alpha(f)$ 的角间隔采样 $z$ 变换"，它是 Chirp-Z 变换（CZT）的一个特例，对应参数
 
 $$
-X_k = \sum_{n=0}^{N-1} x(n)z_k^{-n} = \sum_{n=0}^{N-1} x(n)A^{-n}W^{kn},\qquad k = 0,1,\dots,M-1 \tag{12}
+A = 1,\qquad W = \exp\left(-j\frac{2\pi}{N\alpha(f)}\right),\qquad M = N \tag{12}
 $$
 
-取 $A = 1$、$W = \exp\left(-j\dfrac{2\pi}{N\alpha}\right)$、$M = N$，式(12)就是式(10)。再借 Bluestein 恒等式
-
-$$
-kn = \frac{k^2 + n^2 - (k-n)^2}{2} \tag{13}
-$$
-
-把指数上的乘积拆成卷积：
-
-$$
-X_k = W^{\frac{k^2}{2}}\sum_{n=0}^{N-1}\underbrace{\left[x(n)A^{-n}W^{\frac{n^2}{2}}\right]}_{g(n)}W^{-\frac{(k-n)^2}{2}} = W^{\frac{k^2}{2}}\,[g*h](k),\qquad h(m) = W^{-\frac{m^2}{2}} \tag{14}
-$$
-
-取 $L = 2N-1$：$A(r)$ 前 $N$ 点放 $g(r)$、其余补零；$B(r) = h\left(r-(N-1)\right)$；做 $c(r) = \text{IFFT}\left[\text{FFT}(A)\cdot\text{FFT}(B)\right]$，取后 $N$ 点：
-
-$$
-X\left(f,\frac{n}{\alpha}\right) = W^{\frac{n^2}{2}}\,c(N-1+n),\qquad n = 0,1,\dots,N-1 \tag{15}
-$$
-
-*   $B(r)$ 里的 $-(N-1)$ 是把 $h(m)$ 的负索引对齐到数组下标 0，写错会让结果整体错位。
-*   $A$ 与 $B$ 的线性卷积长度是 $3N-2$，超过 $L$ 的部分绕回到前 $N-1$ 个点上，所以只取后 $N$ 点。
+代入 CZT 的通用形式即得式(10)，于是这一步也能用 FFT 实现，每列复杂度由 $O(N^2)$ 降到 $O(N\log N)$。CZT 的定义、Bluestein 分解、FFT 实现与 $A,W,M$ 的取法见《[Chirp-Z 变换（CZT）](/radar/11_Chirp-Z变换/)》。
 
 | 实现 | 数值性质 | 每列复杂度 | 备注 |
 | :--- | :--- | :--- | :--- |
@@ -157,31 +138,31 @@ $$
 慢时间以 $T_r$ 采样，无模糊多普勒范围只有 $\pm f_r/2$；而真实的多普勒量 $D(f)$ 可以超出它，超出部分折叠：
 
 $$
-D(f) = k\,f_r + f_a,\qquad \lvert f_a\rvert \le \frac{f_r}{2} \tag{16}
+D(f) = k\,f_r + f_a,\qquad \lvert f_a\rvert \le \frac{f_r}{2} \tag{13}
 $$
 
 $k$ 是整数，即**模糊数**。关键一步：在整数脉冲序号上
 
 $$
-\exp\left(-j2\pi k f_r\,iT_r\right) = \exp\left(-j2\pi ki\right) \equiv 1 \tag{17}
+\exp\left(-j2\pi k f_r\,iT_r\right) = \exp\left(-j2\pi ki\right) \equiv 1 \tag{14}
 $$
 
 **模糊部分在样本上完全不可见**，所以插值重建出来的是 $f_a$ 而不是 $D(f)$，插值后的相位斜率仍然含 $f$：
 
 $$
--2\pi\,\alpha(f)\,f_a T_r \tag{18}
+-2\pi\,\alpha(f)\,f_a T_r \tag{15}
 $$
 
 带内两端相差约 $B/f_c$，累积到 $N$ 个脉冲可达若干 $\pi$，最后沿距离维求和时相互抵消。因此在插值结果上补一项：
 
 $$
-Y(f,n) \leftarrow Y(f,n)\cdot\exp\left(-j2\pi k\,\alpha(f)\,n\right) \tag{19}
+Y(f,n) \leftarrow Y(f,n)\cdot\exp\left(-j2\pi k\,\alpha(f)\,n\right) \tag{16}
 $$
 
 补偿后的斜率为
 
 $$
--2\pi\,\alpha(f)\,(k f_r + f_a)\,T_r = -2\pi\,\alpha(f)\,D(f)\,T_r = -2\pi f_c\frac{2v}{c}T_r \tag{20}
+-2\pi\,\alpha(f)\,(k f_r + f_a)\,T_r = -2\pi\,\alpha(f)\,D(f)\,T_r = -2\pi f_c\frac{2v}{c}T_r \tag{17}
 $$
 
 与 $f$ 无关，回到式(8)的理想结果。
