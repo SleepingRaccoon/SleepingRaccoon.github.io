@@ -34,6 +34,17 @@ param(
 
 $utf8 = New-Object System.Text.UTF8Encoding($false)
 
+function Fix-Prime([string]$math) {
+  # \prime 必须是上标：\Theta\prime\prime → \Theta^{\prime\prime}
+  # 已经是 ^{...} 形式的（以及紧跟在 \prime 后面的第二个 \prime）不动
+  return [regex]::Replace($math, '(?<!\^{)(?<!\\prime)((?:\\prime\s*)+)', {
+      param($x)
+      $n = ([regex]::Matches($x.Groups[1].Value, '\\prime')).Count
+      $inner = '\prime' * $n
+      return '^{' + $inner + '}'
+    })
+}
+
 function Get-DangerousFix([string]$math) {
   if (-not $math) { return $math }
   $m = $math
@@ -42,7 +53,7 @@ function Get-DangerousFix([string]$math) {
   $m = [regex]::Replace($m, '\|([^|]+)\|', '\lvert $1 \rvert ')
   $m = $m.Replace('*', '\ast ')
   $m = $m.Replace("''", "\prime\prime ").Replace("'", "\prime ")
-  return $m
+  return (Fix-Prime $m)
 }
 
 $files = if ((Get-Item -LiteralPath $Path).PSIsContainer) {
@@ -56,6 +67,7 @@ foreach ($file in $files) {
   $original = $text
   $lines = $text -split "`n"
   $inFence = $false
+  $inMathBlock = $false
 
   for ($i = 0; $i -lt $lines.Count; $i++) {
     $line = $lines[$i]
@@ -64,12 +76,14 @@ foreach ($file in $files) {
     if ($line -match '^\s*(```|~~~)') { $inFence = -not $inFence; continue }
     if ($inFence) { continue }
 
-    # 行间定界符：独占一行的 \[ 和 \]
-    if ($line -match '^\s*\\\[\s*$' -or $line -match '^\s*\\\]\s*$') {
-      $line = '$$'
-      $lines[$i] = $line
+    # 行间定界符：独占一行的 \[ \] 换成 $$，并跟踪是否在行间公式里
+    if ($line -match '^\s*\\\[\s*$' -or $line -match '^\s*\\\]\s*$' -or $line -eq '$$') {
+      if ($line -ne '$$') { $lines[$i] = '$$' }
+      $inMathBlock = -not $inMathBlock
       continue
     }
+    # 行间公式内容：kramdown 原样保留，只需把 \prime 规范成上标
+    if ($inMathBlock) { $lines[$i] = (Fix-Prime $line); continue }
 
     # 其余处理：反引号切分，偶数段是行内代码之外
     $segments = $line -split '`'

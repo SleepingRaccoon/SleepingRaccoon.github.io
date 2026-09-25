@@ -21,13 +21,25 @@ $files = Get-ChildItem -LiteralPath $Root -Recurse -File -Filter *.md |
 $problems = 0
 $checked = 0
 
+# 收集文档的线上路径，用于检查站内链接写没写对
+$perm = @{}
+foreach ($f in (Get-ChildItem -LiteralPath $Root -Recurse -File -Filter *.md | Where-Object { $_.FullName -notmatch '\\\.git\\' })) {
+  $rel = $f.FullName.Substring((Resolve-Path -LiteralPath $Root).Path.Length).TrimStart('\', '/') -replace '\\', '/'
+  if ($rel -like '_radar/*') { $perm['/radar/' + (($rel -replace '^_radar/', '') -replace '\.md$', '') + '/'] = $true }
+  elseif ($rel -like '_cuda/*') { $perm['/cuda/' + (($rel -replace '^_cuda/', '') -replace '\.md$', '') + '/'] = $true }
+  elseif ($rel -notlike '_*') { $perm['/' + ($rel -replace '\.md$', '') + '/'] = $true }
+}
+
 foreach ($file in $files) {
   $lines = ([IO.File]::ReadAllText($file.FullName)) -replace "`r`n", "`n" -split "`n"
   $inFence = $false
+  $inMathBlock = $false
   for ($i = 0; $i -lt $lines.Count; $i++) {
     $line = $lines[$i]
     if ($line -match '^\s*(```|~~~)') { $inFence = -not $inFence; continue }
     if ($inFence) { continue }
+    if ($line -eq '$$') { $inMathBlock = -not $inMathBlock; continue }
+    if ($inMathBlock) { continue }   # 行间公式内容不按 markdown 解析，不算问题
 
     # 去掉行内代码后逐段检查（代码里写的示例不算问题）
     $scan = $line
@@ -35,6 +47,26 @@ foreach ($file in $files) {
     for ($s = 0; $s -lt $segments.Count; $s += 2) {
       $seg = $segments[$s]
       if (-not $seg) { continue }
+
+      # 裸 \prime（没写成上标）渲染出来位置不对
+      if ($seg -match '(?<!\^\{)(?<!\\prime)((?:\\prime\s*)+)') {
+        "  [$($file.Name):$($i + 1)] \prime 没写成上标，应为 ^{\prime}：$($seg.Trim())"; $problems++
+      }
+
+      # 站内链接：必须是绝对路径，且目标文档要存在
+      foreach ($m in [regex]::Matches($seg, '\]\(([^)]+)\)')) {
+        $target = $m.Groups[1].Value
+        if ($target -match '^(https?:|mailto:|#)') { continue }
+        if ($target -notmatch '^/') {
+          "  [$($file.Name):$($i + 1)] 站内链接用了相对路径（会拼错）：$target"; $problems++
+        }
+        elseif ($target -match '^/(radar|cuda)/') {
+          $clean = ($target -replace '#.*$', '') -replace '\?.*$', ''
+          if (-not $perm.ContainsKey($clean)) {
+            "  [$($file.Name):$($i + 1)] 站内链接目标不存在（注意文件名前缀，如 01_）：$target"; $problems++
+          }
+        }
+      }
 
       if ($seg -match '\\[\(\[]') {
         "  [$($file.Name):$($i + 1)] 用了 \\( \\) 或 \\[ \\]（网站上不渲染）：$($seg.Trim())"; $problems++

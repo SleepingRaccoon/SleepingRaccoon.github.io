@@ -74,9 +74,9 @@ $$
 其中三项分别是：
 *   $W_r(f_\tau)$：距离窗 $w_r$ 经驻点 $\tau^{\ast}$ 尺缩后的频域形式。窗的自变量在驻点处取值 $\left.(\tau - 2R/c)\right\rvert_{\tau=\tau^{\ast}} = f_\tau/K_r$，所以 $w_r\left[\tau - 2R(\eta)/c\right]$ 变成 $w_r(f_\tau/K_r)$，记作 $W_r(f_\tau)$。
 *   $\Theta(\tau^{\ast})$：驻点处的总相位，展开就是式(5)。
-*   $\Theta\prime\prime $：式(3)再求一次导，$\Theta\prime\prime  = 2\pi K_r$ 是常数，所以这两个因子只跟 $K_r$ 有关，是固定增益与固定相移，与 $f_\tau$ 无关，并进 $A_0$ 即可。
+*   $\Theta^{\prime\prime}$：式(3)再求一次导，$\Theta^{\prime\prime}= 2\pi K_r$ 是常数，所以这两个因子只跟 $K_r$ 有关，是固定增益与固定相移，与 $f_\tau$ 无关，并进 $A_0$ 即可。
 
-（驻定相位原理见[《驻定相位原理》](../radar/驻定相位原理/)。）于是距离 FFT 后
+（驻定相位原理见[《驻定相位原理》](/radar/01_驻定相位原理/)。）于是距离 FFT 后
 
 $$
  S_0(f_\tau, \eta) = A_0 W_r(f_\tau) \exp\left\lbrace-j \pi \frac{f_\tau^2}{K_r}\right\rbrace \exp\left\lbrace-j \frac{4\pi f_\tau R(\eta)}{c}\right\rbrace \exp\left\lbrace-j \frac{4\pi f_0 R(\eta)}{c}\right\rbrace \tag{6}
@@ -138,7 +138,7 @@ $$
  \eta^{*} = -\frac{f_\eta}{K_a} \tag{14}
 $$
 
-二阶导 $\Theta\prime\prime  = -2\pi K_a$ 同样只贡献常数。把驻点 $\eta^{\ast}$ 代回总相位，得到频域相位：
+二阶导 $\Theta^{\prime\prime}= -2\pi K_a$ 同样只贡献常数。把驻点 $\eta^{\ast}$ 代回总相位，得到频域相位：
 
 $$
  \Theta(f_\eta) = -\pi K_a \left(-\frac{f_\eta}{K_a}\right)^2 - 2\pi f_\eta \left(-\frac{f_\eta}{K_a}\right) = \pi \frac{f_\eta^2}{K_a} \tag{15}
@@ -153,7 +153,7 @@ $$
 其中三项分别是：
 *   $W_a(f_\eta - f_{\eta_c})$：方位窗 $w_a$ 经驻点 $\eta^{\ast}$ 尺缩后的频域形式，与 $w_r \to W_r$ 同一回事。
 *   $\Theta(\eta^{\ast})$：驻点处的总相位，展开就是式(15)。
-*   $\Theta\prime\prime  = -2\pi K_a$ 是常数，所以这两个因子只跟 $K_a$ 有关，一起并入 $A_0$ 即可。
+*   $\Theta^{\prime\prime}= -2\pi K_a$ 是常数，所以这两个因子只跟 $K_a$ 有关，一起并入 $A_0$ 即可。
 
 **距离多普勒域信号。** 方位 FFT 之后，信号带上距离徙动与方位频域包络：
 
@@ -178,7 +178,7 @@ RCMC 的目标是把式(16)包络里的 $p_r[\tau - 2(R_0 + \Delta R(f_\eta))/c]
 
 **插值不是卷积。** 插值是重采样，改变的是采样点的位置；卷积保持采样点不动，改变的是波形形状。对带限信号做偏移 $\Delta \tau$ 的重采样，可以写成原采样点的加权求和，权值是 sinc 核。之所以不直接用 FFT 做快速卷积实现这一步，是因为这里的插值核随距离和方位频率变化（空变），或者需要很长的核才能保证精度，代价太大。
 
-**做法一：距离多普勒域 sinc 插值。** 对每个 $f_\eta$ 算出距离偏移 $\Delta \tau = 2\Delta R(f_\eta)/c$。原采样点 $\tau_n$，新采样点 $\tau_m\prime  = \tau_m + \Delta \tau$，则
+**做法一：距离多普勒域 sinc 插值。** 对每个 $f_\eta$ 算出距离偏移 $\Delta \tau = 2\Delta R(f_\eta)/c$。原采样点 $\tau_n$，新采样点 $\tau_m^{\prime}= \tau_m + \Delta \tau$，则
 
 $$
  S_2(\tau_m', f_\eta) = \sum_{n} S_1(\tau_n, f_\eta) \cdot \text{sinc}\left[ B_r (\tau_m' - \tau_n) \right] \tag{19}
