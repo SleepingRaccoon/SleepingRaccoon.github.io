@@ -19,7 +19,11 @@
    */
   function headingText(heading) {
     var clone = heading.cloneNode(true);
-    var junk = clone.querySelectorAll('script, .MathJax_Preview, .header-anchor');
+    // script 是 MathJax 留的原文；MathJax_Preview 是渲染前的占位副本；
+    // MJX_Assistive_MathML / mjx-assistive-mml 是给读屏软件用的隐藏副本（v2 / v3）。
+    var junk = clone.querySelectorAll(
+      'script, .MathJax_Preview, .MJX_Assistive_MathML, .mjx-assistive-mml, .header-anchor'
+    );
     Array.prototype.forEach.call(junk, function (node) {
       if (node.parentNode) {
         node.parentNode.removeChild(node);

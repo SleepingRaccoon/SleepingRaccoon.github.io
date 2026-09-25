@@ -124,3 +124,16 @@ docker run --rm -v "$PWD":/srv/jekyll -p 4000:4000 -it jekyll/jekyll jekyll serv
 仓库 Settings → Pages → Source 选择 **Deploy from a branch**，
 分支选 `main`、目录选 `/ (root)`。之后每次 push 到 `main`，
 GitHub Pages 会自动用 Jekyll 构建并发布到 <https://sleepingraccoon.github.io>。
+
+## 工具：把 AI 写的公式规范化
+
+`tools/normalize-math.ps1` 负责把 AI 生成文档里常见的 LaTeX 写法转成本站能渲染的形式：
+`\( \)` → `$ $`、`\[ \]` → `$$`、`\{ \}` → `\lbrace \rbrace`、`|x|` → `\lvert x \rvert`，
+并删掉正文里多余的一级标题。新文档丢进仓库后先跑一次：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools/normalize-math.ps1 -Path "_radar/你的文档.md"
+```
+
+> 为什么必须转：`\( \)` 和 `\[ \]` 在 kramdown 里会被吃掉反斜杠，页面上公式就成了裸文本；
+> 而 VS Code 的 Markdown 插件认这两种写法——所以典型症状是"编辑器里好好的，网站上不渲染"。

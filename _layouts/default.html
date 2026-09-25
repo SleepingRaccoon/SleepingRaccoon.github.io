@@ -9,7 +9,7 @@
   {% elsif site.description %}
   <meta name="description" content="{{ site.description }}">
   {% endif %}
-  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}?v={{ site.time | date: '%s' }}">
   {% if site.url %}<link rel="canonical" href="{{ page.url | absolute_url }}">{% endif %}
 </head>
 <body>
@@ -72,6 +72,9 @@
       })();
     })();
   </script>
-  <script src="{{ '/assets/js/toc.js' | relative_url }}" defer></script>
+  {%- comment -%}
+    带上构建时间戳，避免浏览器缓存旧版 toc.js（例如目录脚本修好了但页面还用着旧的）
+  {%- endcomment -%}
+  <script src="{{ '/assets/js/toc.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
 </body>
 </html>
