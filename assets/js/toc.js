@@ -103,8 +103,12 @@
 
   function hookMathJax(triesLeft) {
     if (window.MathJax && window.MathJax.Hub && window.MathJax.Hub.Register) {
-      window.MathJax.Hub.Register.MessageHook('End Typeset', function () {
-        refreshTocText();
+      var hub = window.MathJax.Hub;
+      // 还在排版中：排版结束会收到 End Typeset
+      hub.Register.MessageHook('End Typeset', refreshTocText);
+      // 挂回调时已经排完版：上面这条不会再来，所以再补几次定时刷新
+      [300, 1200, 3000, 6000].forEach(function (delay) {
+        window.setTimeout(refreshTocText, delay);
       });
       return;
     }
