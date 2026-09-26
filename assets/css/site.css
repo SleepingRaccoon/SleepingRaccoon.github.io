@@ -472,6 +472,18 @@ main.wrap {
   -webkit-overflow-scrolling: touch;
 }
 
+/* 宽屏上给公式多借一点横向空间：右边借侧栏前那 3rem 间隔里的一部分，左边按页面两侧
+   实际剩余留白借（最多 3.5rem）。否则本来一行放得下的公式，会因为正文栏只有 760px
+   被卡成横向滚动——PC 上看着像"没显示全"。借出去的量都留在布局内部，不会顶出页面。 */
+@media (min-width: 901px) {
+  .post-body .MathJax_Display,
+  .post-body mjx-container[display="true"] {
+    max-width: none;
+    margin-left: calc(-1 * clamp(0px, (min(1180px, 100vw) - 1068px) / 2, 3.5rem));
+    margin-right: -2.5rem;
+  }
+}
+
 /* 表格在窄屏里横向滚动，而不是把整页顶宽 */
 @media (max-width: 700px) {
   .post-body table {
