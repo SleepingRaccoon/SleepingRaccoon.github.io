@@ -481,7 +481,7 @@ main.wrap {
     max-width: none;
     /* MathJax 自己给 .MathJax_Display 设了 width: 100%，不覆盖掉的话负外边距撑不开 */
     width: auto;
-    margin-left: calc(-1 * clamp(0px, (min(1180px, 100vw) - 1068px) / 2, 3.5rem));
+    margin-left: calc(-1 * clamp(0px, (min(1180px, 100vw) - 1040px) / 2, 4.5rem));
     margin-right: -2.5rem;
   }
 }
