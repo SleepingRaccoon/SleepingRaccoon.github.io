@@ -523,7 +523,8 @@ main.wrap {
   top: 4.5rem;
   max-height: calc(100vh - 6rem);
   overflow-y: auto;
-  padding: 0.85rem 1rem;
+  /* 左侧留得多一点：窄屏时目录框与正文左边缘对齐，靠内边距拉开层次 */
+  padding: 0.85rem 1rem 0.85rem 1.35rem;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--bg-soft);
@@ -618,9 +619,9 @@ main.wrap {
 }
 
 .book-item .toc-list {
-  margin: 0.1rem 0 0.4rem;
+  /* 当前篇的章节列表：原来只缩进 0.15rem，几乎和篇目标题齐平，看不出层级 */
+  margin: 0.1rem 0 0.5rem 0.85rem;
   border-left: 1px solid var(--border);
-  margin-left: 0.15rem;
 }
 
 @media (max-width: 900px) {
@@ -640,6 +641,8 @@ main.wrap {
   .toc {
     position: static;
     max-height: 14rem;
+    /* 窄屏时目录框在正文上方，左右各缩一点，别和正文左边缘完全齐平 */
+    margin: 0 0.5rem;
   }
 }
 
