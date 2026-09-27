@@ -620,7 +620,7 @@ main.wrap {
 
 .book-item .toc-list {
   /* 当前篇的章节列表：原来只缩进 0.15rem，几乎和篇目标题齐平，看不出层级 */
-  margin: 0.1rem 0 0.5rem 0.85rem;
+  margin: 0.5rem 0 0.6rem 1.25rem;
   border-left: 1px solid var(--border);
 }
 
