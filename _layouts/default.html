@@ -43,6 +43,18 @@
         displayMath: [['$$', '$$'], ['\\[', '\\]']],
         processEscapes: true
       },
+      /*
+       * 数学字体换成 TeX Gyre Termes Math：Times 风格，LaTeX 的 newtxmath 就是拿它做底，
+       * 观感接近 IEEE/Elsevier 论文里的公式，而不是 MathJax 默认的 Computer Modern。
+       * 该字体加载失败时依次回退到 STIX-Web（同为 Times 风格）与内置的 TeX 字体。
+       */
+      "HTML-CSS": {
+        availableFonts: ["Gyre-Termes", "STIX-Web", "TeX"],
+        preferredFont: "Gyre-Termes",
+        webFont: "Gyre-Termes",
+        scale: 100
+      },
+      SVG: { font: "Gyre-Termes" },
       showMathMenu: false,
       messageStyle: "none"
     });
